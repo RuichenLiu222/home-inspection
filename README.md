@@ -147,18 +147,11 @@ python run_model.py --split test --methods all --output results/test_predictions
 | `checklist` | 明确三类检查清单，只输出一个标签 |
 | `structured` | 检查清单并强制输出 JSON |
 | `verified` | 复用 `structured` 初判，问题样本再进行证据确认 |
-| `decomposed` | 分别检查三个类别，再综合并二次确认；Demo 默认使用 |
 
 也可以只运行指定方法：
 
 ```powershell
 python run_model.py --split test --methods structured,verified
-```
-
-若需要额外评估降低类别位置偏置的拆解方法：
-
-```powershell
-python run_model.py --split test --methods decomposed --output results\decomposed.jsonl
 ```
 
 固定设置包括 `do_sample=False` 和固定随机种子，减少重复实验的生成波动。
