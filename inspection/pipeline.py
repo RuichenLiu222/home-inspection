@@ -66,12 +66,23 @@ class InspectionPipeline:
             return InspectionTrace(method, raw, parsed, latency, parse_strategy="label_heuristic")
 
         if method == "checklist":
-            raw, latency = self.runner.generate(image, CHECKLIST_PROMPT, max_new_tokens=32)
-            parsed = result_from_label(parse_label(raw), raw)
-            return InspectionTrace(method, raw, parsed, latency, parse_strategy="label_parser")
+            return self.inspect_checklist(image)
 
-        structured = self.inspect_structured(image)
-        return structured if method == "structured" else self.verify(image, structured)
+        if method == "verified":
+            return self.verify(image, self.inspect_checklist(image))
+
+        return self.inspect_structured(image)
+
+    def inspect_checklist(self, image: Image.Image | str | Path) -> InspectionTrace:
+        raw, latency = self.runner.generate(image, CHECKLIST_PROMPT, max_new_tokens=32)
+        parsed = result_from_label(parse_label(raw), raw)
+        return InspectionTrace(
+            method="checklist",
+            raw_output=raw,
+            parsed=parsed,
+            latency_seconds=latency,
+            parse_strategy="label_parser",
+        )
 
     def inspect_structured(self, image: Image.Image | str | Path) -> InspectionTrace:
         raw, latency = self.runner.generate(image, STRUCTURED_PROMPT)
