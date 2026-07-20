@@ -24,8 +24,8 @@ def build_app(model_id: str, device: str) -> gr.Blocks:
     def inspect(image: Image.Image | None, use_confirmation: bool) -> tuple[dict, str]:
         if image is None:
             return {}, "请先上传一张厨房图片。"
-        method = "verified" if use_confirmation else "structured"
-        trace = pipeline.inspect(image, method)
+        structured = pipeline.inspect_structured(image)
+        trace = pipeline.verify(image, structured) if use_confirmation else structured
         result = trace.parsed
         payload = {
             "result": result.result,
