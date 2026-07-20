@@ -48,25 +48,3 @@ supporting this exact issue?
 
 Answer only one word: yes, no, or uncertain.
 Use yes only when the evidence is explicit. Do not rely on assumptions."""
-
-
-DECOMPOSED_PROMPTS = {
-    "floor_obstruction": """Inspect only the floor and walking path in this kitchen image.
-Is there a concrete visible object physically blocking the walking area?
-Do not count shadows, floor patterns, cabinets, or objects located only on a countertop.
-Answer exactly: yes | visible object and location
-or: no | none
-or: uncertain | reason""",
-    "countertop_clutter": """Inspect only the kitchen countertop in this image.
-Is the countertop visibly and excessively cluttered with many items, dishes, or waste?
-Do not count normal appliances or a few neatly arranged objects.
-Answer exactly: yes | visible objects and location
-or: no | none
-or: uncertain | reason""",
-    "unsafe_object_placement": """Inspect object placement in this kitchen image.
-Is a visible object in a clearly unsafe position, such as near an open flame,
-at a falling edge, or blocking safe appliance use? Do not infer hidden risks.
-Answer exactly: yes | visible object and unsafe location
-or: no | none
-or: uncertain | reason""",
-}
