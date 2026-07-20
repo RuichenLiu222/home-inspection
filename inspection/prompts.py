@@ -17,28 +17,23 @@ Return exactly one label from this list and no other text:
 floor_obstruction, countertop_clutter, unsafe_object_placement, normal, uncertain."""
 
 
-STRUCTURED_PROMPT = """Inspect this kitchen image.
+STRUCTURED_PROMPT = """You are a kitchen safety inspector.
+Ignore logos, watermarks, and decorative text.
+Check only these visible issues:
+- floor_obstruction: objects blocking the floor or walking path
+- countertop_clutter: an obviously cluttered countertop
+- unsafe_object_placement: an object in a clearly unsafe position
 
-Allowed issue types:
-- floor_obstruction
-- countertop_clutter
-- unsafe_object_placement
-
-Return exactly one JSON object in this format:
+If none is visible, use normal. If the image cannot be judged, use uncertain.
+Return ONLY this valid JSON object, with no Markdown or extra text:
 {
   "result": "normal/attention/uncertain",
   "issue_type": "",
   "evidence": "",
   "suggestion": ""
 }
-
-Rules:
-1. Use attention only when one listed issue has clear visual evidence.
-2. Report only the single most obvious issue.
-3. For normal or uncertain, issue_type must be an empty string.
-4. Do not infer anything that is not directly visible.
-5. Use concise English sentences for evidence and suggestion.
-6. Output JSON only, without Markdown or additional text."""
+Use attention only with clear visual evidence and report one issue. For normal or uncertain,
+issue_type must be empty. Keep evidence and suggestion short."""
 
 
 def confirmation_prompt(issue_type: str, evidence: str) -> str:
