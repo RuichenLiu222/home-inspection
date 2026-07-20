@@ -24,7 +24,7 @@ def build_app(model_id: str, device: str) -> gr.Blocks:
     def inspect(image: Image.Image | None, use_confirmation: bool) -> tuple[dict, str]:
         if image is None:
             return {}, "请先上传一张厨房图片。"
-        method = "verified" if use_confirmation else "structured"
+        method = "decomposed" if use_confirmation else "structured"
         trace = pipeline.inspect(image, method)
         result = trace.parsed
         payload = {
@@ -36,6 +36,7 @@ def build_app(model_id: str, device: str) -> gr.Blocks:
             "raw_json_valid": trace.raw_json_valid,
             "parse_strategy": trace.parse_strategy,
             "raw_model_output": trace.raw_output,
+            "focused_check_outputs": trace.component_outputs,
         }
         has_issue = "是" if result.result == "attention" else "否"
         category = CATEGORY_ZH[result.label]
@@ -54,7 +55,7 @@ def build_app(model_id: str, device: str) -> gr.Blocks:
         with gr.Row():
             image = gr.Image(type="pil", label="厨房图片")
             with gr.Column():
-                confirmation = gr.Checkbox(value=True, label="启用视觉证据二次确认")
+                confirmation = gr.Checkbox(value=True, label="启用分类拆解与二次确认")
                 button = gr.Button("开始巡检", variant="primary")
                 summary = gr.Markdown("等待上传图片。")
         raw_result = gr.JSON(label="结构化结果")
