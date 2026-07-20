@@ -1,8 +1,9 @@
 name: tests
 
 on:
-  push:
-  pull_request:
+  # Run manually from the Actions page. This avoids email noise while the
+  # submission repository is being assembled file by file.
+  workflow_dispatch:
 
 jobs:
   test:
