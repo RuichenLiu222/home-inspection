@@ -44,7 +44,7 @@ class SmolVLMRunner:
         if self.model is not None:
             return
         import torch
-        from transformers import AutoModelForVision2Seq, AutoProcessor
+        from transformers import AutoModelForImageTextToText, AutoProcessor
 
         if self.device == "cuda":
             dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
@@ -52,9 +52,9 @@ class SmolVLMRunner:
             dtype = torch.float32
 
         self.processor = AutoProcessor.from_pretrained(self.model_id)
-        self.model = AutoModelForVision2Seq.from_pretrained(
+        self.model = AutoModelForImageTextToText.from_pretrained(
             self.model_id,
-            torch_dtype=dtype,
+            dtype=dtype,
             low_cpu_mem_usage=True,
         ).to(self.device)
         self.model.eval()
@@ -85,18 +85,16 @@ class SmolVLMRunner:
             {
                 "role": "user",
                 "content": [
-                    {"type": "image"},
+                    {"type": "image", "image": image},
                     {"type": "text", "text": prompt},
                 ],
             }
         ]
-        chat_prompt = self.processor.apply_chat_template(
+        inputs = self.processor.apply_chat_template(
             messages,
             add_generation_prompt=True,
-        )
-        inputs = self.processor(
-            text=chat_prompt,
-            images=[image],
+            tokenize=True,
+            return_dict=True,
             return_tensors="pt",
         ).to(self.device)
 
