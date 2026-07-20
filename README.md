@@ -32,8 +32,10 @@ flowchart TD
     H --> G
 ```
 
-`verified` 方法不是第二个模型，而是使用同一个 SmolVLM 对首次判断进行一次严格的
-视觉证据复核。只有复核回答 `yes` 时才保留问题。
+`verified` 方法不是第二个模型，而是复用 `checklist` 的同一次初判，再使用同一个
+SmolVLM 进行严格的视觉证据复核。只有复核回答 `yes` 时才保留问题，因此可以将
+`checklist` 和 `verified` 逐图公平比较。Demo 为了展示完整依据和建议，使用结构化
+初判并应用相同的二次确认逻辑。
 
 ## 项目结构
 
@@ -146,7 +148,7 @@ python run_model.py --split test --methods all --output results/test_predictions
 | `direct` | 简单开放式提问，使用规则将回答映射为标签 |
 | `checklist` | 明确三类检查清单，只输出一个标签 |
 | `structured` | 检查清单并强制输出 JSON |
-| `verified` | 复用 `structured` 初判，问题样本再进行证据确认 |
+| `verified` | 复用同一次 `checklist` 初判，问题样本再进行证据确认 |
 
 也可以只运行指定方法：
 
