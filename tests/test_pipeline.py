@@ -34,3 +34,19 @@ def test_normal_result_skips_verifier():
     assert trace.parsed.label == "normal"
     assert trace.confirmation_output == ""
     assert runner.calls == 1
+
+
+def test_decomposed_checks_avoid_first_label_bias():
+    runner = FakeRunner(
+        [
+            "no | the walking path is clear",
+            "yes | many dirty bowls cover the counter",
+            "no | none",
+            "yes",
+        ]
+    )
+    pipeline = InspectionPipeline(runner=runner)
+    trace = pipeline.inspect(Image.new("RGB", (8, 8)), "decomposed")
+    assert trace.parsed.label == "countertop_clutter"
+    assert trace.confirmation_decision == "yes"
+    assert runner.calls == 4
