@@ -51,9 +51,6 @@ def run(args: argparse.Namespace) -> list[dict]:
                     traces.append(structured)
                 if "verified" in methods:
                     traces.append(pipeline.verify(image_path, structured))
-            if "decomposed" in methods:
-                traces.append(pipeline.inspect(image_path, "decomposed"))
-
             for trace in traces:
                 records.append(
                     {
