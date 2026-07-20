@@ -34,6 +34,8 @@ def build_app(model_id: str, device: str) -> gr.Blocks:
             "suggestion": result.suggestion,
             "confirmation": trace.confirmation_decision or "not_required",
             "raw_json_valid": trace.raw_json_valid,
+            "parse_strategy": trace.parse_strategy,
+            "raw_model_output": trace.raw_output,
         }
         has_issue = "是" if result.result == "attention" else "否"
         category = CATEGORY_ZH[result.label]
