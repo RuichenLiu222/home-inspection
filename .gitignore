@@ -1,0 +1,27 @@
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.idea/
+.vscode/
+
+# Large datasets and generated artifacts
+data/raw/*
+data/candidates/*
+data/debug/*
+data/test/*
+!data/raw/.gitkeep
+!data/candidates/.gitkeep
+!data/debug/.gitkeep
+!data/test/.gitkeep
+data/annotations.jsonl
+data/curation.jsonl
+data/candidates.jsonl
+results/*
+!results/.gitkeep
+
+# Downloaded model caches if a local cache is placed in this repository
+models/
+.cache/
