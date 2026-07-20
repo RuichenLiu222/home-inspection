@@ -85,18 +85,24 @@ class SmolVLMRunner:
             {
                 "role": "user",
                 "content": [
-                    {"type": "image", "image": image},
+                    {"type": "image"},
                     {"type": "text", "text": prompt},
                 ],
             }
         ]
-        inputs = self.processor.apply_chat_template(
+        chat_prompt = self.processor.apply_chat_template(
             messages,
             add_generation_prompt=True,
-            tokenize=True,
-            return_dict=True,
+            tokenize=False,
+        )
+        inputs = self.processor(
+            text=chat_prompt,
+            images=[image],
             return_tensors="pt",
-        ).to(self.device)
+        )
+        if "pixel_values" not in inputs:
+            raise RuntimeError("SmolVLM processor did not create visual inputs for the image")
+        inputs = inputs.to(self.device)
 
         started = time.perf_counter()
         with torch.inference_mode():
