@@ -33,5 +33,7 @@ def test_recovered_json_keeps_raw_validity_false():
 def test_label_and_confirmation_parsers():
     assert parse_label("countertop_clutter") == "countertop_clutter"
     assert parse_label("The image is too blurry to determine.") == "uncertain"
+    assert parse_label("No visible problem.") == "normal"
+    assert parse_label("No visible issues.") == "normal"
     assert parse_confirmation("Yes, the evidence is clear.") == "yes"
     assert parse_confirmation("I cannot decide") == "uncertain"
