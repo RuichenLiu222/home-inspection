@@ -42,7 +42,7 @@ def test_verified_starts_from_checklist_prompt():
     runner = FakeRunner(["countertop_clutter", "yes"])
     pipeline = InspectionPipeline(runner=runner)
     trace = pipeline.inspect(Image.new("RGB", (8, 8)), "verified")
-    assert "Return exactly one label" in runner.prompts[0]
+    assert "Decision: write exactly one" in runner.prompts[0]
     assert trace.parsed.label == "countertop_clutter"
     assert trace.confirmation_decision == "yes"
     assert runner.calls == 2
