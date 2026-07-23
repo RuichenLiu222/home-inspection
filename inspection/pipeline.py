@@ -74,7 +74,7 @@ class InspectionPipeline:
         return self.inspect_structured(image)
 
     def inspect_checklist(self, image: Image.Image | str | Path) -> InspectionTrace:
-        raw, latency = self.runner.generate(image, CHECKLIST_PROMPT, max_new_tokens=32)
+        raw, latency = self.runner.generate(image, CHECKLIST_PROMPT, max_new_tokens=64)
         parsed = result_from_label(parse_label(raw), raw)
         return InspectionTrace(
             method="checklist",
