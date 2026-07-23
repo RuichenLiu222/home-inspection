@@ -116,6 +116,17 @@ python curate_data.py
 
 建议最终使用 15 张调试图和 30 张测试图，并尽量保证五类分布不过度失衡。
 
+如果人工审核得到的有效图片超过 60 张，可以先保留完整标注，再使用固定随机种子
+进行分层抽样：
+
+```powershell
+Copy-Item data\annotations.jsonl data\annotations_all_128.jsonl
+python select_subset.py
+```
+
+脚本不会删除原始图片，会从完整标注池中选择 15 张调试图片和 30 张测试图片，
+复制到 `data/selected/`，并将最终 45 张样本写入 `data/annotations.jsonl`。
+
 ## 4. 数据观察
 
 ```powershell
