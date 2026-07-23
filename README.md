@@ -127,6 +127,16 @@ python select_subset.py
 脚本不会删除原始图片，会从完整标注池中选择 15 张调试图片和 30 张测试图片，
 复制到 `data/selected/`，并将最终 45 张样本写入 `data/annotations.jsonl`。
 
+正式运行模型前，建议逐张复核最终 45 张图片：
+
+```powershell
+Copy-Item data\annotations.jsonl data\annotations_before_review.jsonl
+python review_annotations.py
+```
+
+复核工具运行在 `http://127.0.0.1:7862`，可以修改人工标准标签，但不会删除图片或
+改变 debug/test 划分。
+
 ## 4. 数据观察
 
 ```powershell
