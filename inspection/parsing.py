@@ -20,6 +20,10 @@ NORMAL_PATTERNS = (
     "no obvious issue",
     "no obvious problem",
     "no clear issue",
+    "no visible issue",
+    "no visible issues",
+    "no visible problem",
+    "no visible problems",
     "appears safe",
     "looks safe",
 )
