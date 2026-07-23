@@ -194,6 +194,44 @@ python evaluate.py --predictions results/test_predictions.jsonl
 程序允许 Demo 对带 Markdown 代码块的 JSON 进行容错恢复，但这种输出在正式
 JSON 合法率中仍记为不合法，避免指标虚高。
 
+### 最终实验结果
+
+共人工审核 225 张 NYU Depth V2 厨房候选图片，剔除 97 张模糊、重复或无效图片，
+得到 128 张有效标注图片。使用固定随机种子进行分层抽样后，最终使用 45 张：
+调试集 15 张、测试集 30 张。最终标签分布为：
+
+| 标签 | 数量 |
+|---|---:|
+| `floor_obstruction` | 6 |
+| `countertop_clutter` | 11 |
+| `unsafe_object_placement` | 3 |
+| `normal` | 21 |
+| `uncertain` | 4 |
+
+固定提示词后在 30 张测试图片上的结果如下：
+
+| 方法 | Accuracy | 正常图误报数 | JSON 合法率 |
+|---|---:|---:|---:|
+| `direct` | 46.67% | 0 | — |
+| `checklist` | 23.33% | 14 | — |
+| `verified` | 43.33% | 1 | — |
+| `structured` | 13.33% | 13 | 0.00% |
+
+二次确认将检查清单方法的正常图误报从 14 次降低到 1 次，并将准确率提高 20 个
+百分点，说明严格证据复核可以显著抑制误报。但 `verified` 的 13 个正确结果均为
+`normal`，真实问题也大量被拒绝，表明该策略在小模型上过于保守。结构化方法几乎
+塌缩为 `floor_obstruction`，且没有产生可直接解析的合法 JSON，体现了 0.5B 模型
+在细粒度分类与格式遵循方面的局限。
+
+代表性案例：
+
+- 正确：`kitchen_0819.jpg`，检查清单正确识别 `countertop_clutter`；
+- 正确：`kitchen_0829.jpg`，二次确认拒绝误报并正确输出 `normal`；
+- 失败：`kitchen_0898.jpg`，初判正确识别 `floor_obstruction`，二次确认却错误拒绝；
+- 失败：`kitchen_0133.jpg`，正常厨房被二次确认错误保留为 `countertop_clutter`。
+
+完整逐图结果和指标保存在 `results/`。
+
 ## 7. 启动 Demo
 
 ```powershell
