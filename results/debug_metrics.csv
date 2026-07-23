@@ -1,0 +1,5 @@
+﻿method,total,correct,accuracy,false_positive_count,json_valid_count,json_total,json_validity
+direct,15,7,0.4667,0,,,
+checklist,15,3,0.2,7,,,
+verified,15,6,0.4,2,,,
+structured,15,2,0.1333,7,0,15,0.0
