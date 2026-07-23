@@ -94,6 +94,11 @@ def write_subset(
     seed: int,
 ) -> None:
     project_root = Path(__file__).resolve().parent
+    source = source if source.is_absolute() else project_root / source
+    output = output if output.is_absolute() else project_root / output
+    selected_root = (
+        selected_root if selected_root.is_absolute() else project_root / selected_root
+    )
     rows = load_rows(source)
     selected = select_rows(rows, seed)
 
