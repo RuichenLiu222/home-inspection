@@ -17,6 +17,7 @@ UNCERTAIN_PATTERNS = (
 )
 NORMAL_PATTERNS = (
     "normal",
+    "none",
     "no obvious issue",
     "no obvious problem",
     "no clear issue",
@@ -63,8 +64,25 @@ def parse_label(raw: str) -> str:
     if exact in (*ISSUE_TYPES, "normal", "uncertain"):
         return exact
 
+    decision_match = re.search(
+        r"(?:decision|label)\s*:\s*"
+        r"(floor[_ ]obstruction|countertop[_ ]clutter|"
+        r"unsafe[_ ]object[_ ]placement|normal|uncertain)\b",
+        text,
+    )
+    if decision_match:
+        return decision_match.group(1).replace(" ", "_")
+
     for issue_type in ISSUE_TYPES:
         if issue_type in text:
+            return issue_type
+    aliases = {
+        "floor obstruction": "floor_obstruction",
+        "countertop clutter": "countertop_clutter",
+        "unsafe object placement": "unsafe_object_placement",
+    }
+    for phrase, issue_type in aliases.items():
+        if phrase in text:
             return issue_type
     if "countertop" in text and any(word in text for word in ("clutter", "mess", "crowded")):
         return "countertop_clutter"
@@ -79,6 +97,8 @@ def parse_label(raw: str) -> str:
         return "uncertain"
     if any(pattern in text for pattern in NORMAL_PATTERNS):
         return "normal"
+    if exact == "floor":
+        return "floor_obstruction"
     return "uncertain"
 
 
