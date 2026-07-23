@@ -35,5 +35,11 @@ def test_label_and_confirmation_parsers():
     assert parse_label("The image is too blurry to determine.") == "uncertain"
     assert parse_label("No visible problem.") == "normal"
     assert parse_label("No visible issues.") == "normal"
+    assert parse_label("None.") == "normal"
+    assert (
+        parse_label("Evidence: dishes cover the sink.\nDecision: countertop_clutter")
+        == "countertop_clutter"
+    )
+    assert parse_label("Unsafe object placement.") == "unsafe_object_placement"
     assert parse_confirmation("Yes, the evidence is clear.") == "yes"
     assert parse_confirmation("I cannot decide") == "uncertain"
