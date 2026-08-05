@@ -1,0 +1,203 @@
+{
+  "direct": {
+    "total": 30,
+    "correct": 14,
+    "accuracy": 0.4667,
+    "false_positive_count": 0,
+    "json_valid_count": null,
+    "json_total": null,
+    "json_validity": null,
+    "label_counts": {
+      "uncertain": 3,
+      "normal": 27
+    },
+    "confusion": {
+      "floor_obstruction": {
+        "floor_obstruction": 0,
+        "countertop_clutter": 0,
+        "unsafe_object_placement": 0,
+        "normal": 2,
+        "uncertain": 2
+      },
+      "countertop_clutter": {
+        "floor_obstruction": 0,
+        "countertop_clutter": 0,
+        "unsafe_object_placement": 0,
+        "normal": 8,
+        "uncertain": 0
+      },
+      "unsafe_object_placement": {
+        "floor_obstruction": 0,
+        "countertop_clutter": 0,
+        "unsafe_object_placement": 0,
+        "normal": 1,
+        "uncertain": 1
+      },
+      "normal": {
+        "floor_obstruction": 0,
+        "countertop_clutter": 0,
+        "unsafe_object_placement": 0,
+        "normal": 14,
+        "uncertain": 0
+      },
+      "uncertain": {
+        "floor_obstruction": 0,
+        "countertop_clutter": 0,
+        "unsafe_object_placement": 0,
+        "normal": 2,
+        "uncertain": 0
+      }
+    }
+  },
+  "checklist": {
+    "total": 30,
+    "correct": 7,
+    "accuracy": 0.2333,
+    "false_positive_count": 14,
+    "json_valid_count": null,
+    "json_total": null,
+    "json_validity": null,
+    "label_counts": {
+      "countertop_clutter": 15,
+      "floor_obstruction": 15
+    },
+    "confusion": {
+      "floor_obstruction": {
+        "floor_obstruction": 3,
+        "countertop_clutter": 1,
+        "unsafe_object_placement": 0,
+        "normal": 0,
+        "uncertain": 0
+      },
+      "countertop_clutter": {
+        "floor_obstruction": 4,
+        "countertop_clutter": 4,
+        "unsafe_object_placement": 0,
+        "normal": 0,
+        "uncertain": 0
+      },
+      "unsafe_object_placement": {
+        "floor_obstruction": 0,
+        "countertop_clutter": 2,
+        "unsafe_object_placement": 0,
+        "normal": 0,
+        "uncertain": 0
+      },
+      "normal": {
+        "floor_obstruction": 6,
+        "countertop_clutter": 8,
+        "unsafe_object_placement": 0,
+        "normal": 0,
+        "uncertain": 0
+      },
+      "uncertain": {
+        "floor_obstruction": 2,
+        "countertop_clutter": 0,
+        "unsafe_object_placement": 0,
+        "normal": 0,
+        "uncertain": 0
+      }
+    }
+  },
+  "verified": {
+    "total": 30,
+    "correct": 13,
+    "accuracy": 0.4333,
+    "false_positive_count": 8,
+    "json_valid_count": null,
+    "json_total": null,
+    "json_validity": null,
+    "label_counts": {
+      "countertop_clutter": 12,
+      "floor_obstruction": 7,
+      "normal": 11
+    },
+    "confusion": {
+      "floor_obstruction": {
+        "floor_obstruction": 3,
+        "countertop_clutter": 1,
+        "unsafe_object_placement": 0,
+        "normal": 0,
+        "uncertain": 0
+      },
+      "countertop_clutter": {
+        "floor_obstruction": 1,
+        "countertop_clutter": 4,
+        "unsafe_object_placement": 0,
+        "normal": 3,
+        "uncertain": 0
+      },
+      "unsafe_object_placement": {
+        "floor_obstruction": 0,
+        "countertop_clutter": 2,
+        "unsafe_object_placement": 0,
+        "normal": 0,
+        "uncertain": 0
+      },
+      "normal": {
+        "floor_obstruction": 3,
+        "countertop_clutter": 5,
+        "unsafe_object_placement": 0,
+        "normal": 6,
+        "uncertain": 0
+      },
+      "uncertain": {
+        "floor_obstruction": 0,
+        "countertop_clutter": 0,
+        "unsafe_object_placement": 0,
+        "normal": 2,
+        "uncertain": 0
+      }
+    }
+  },
+  "structured": {
+    "total": 30,
+    "correct": 17,
+    "accuracy": 0.5667,
+    "false_positive_count": 3,
+    "json_valid_count": 26,
+    "json_total": 30,
+    "json_validity": 0.8667,
+    "label_counts": {
+      "countertop_clutter": 14,
+      "normal": 16
+    },
+    "confusion": {
+      "floor_obstruction": {
+        "floor_obstruction": 0,
+        "countertop_clutter": 3,
+        "unsafe_object_placement": 0,
+        "normal": 1,
+        "uncertain": 0
+      },
+      "countertop_clutter": {
+        "floor_obstruction": 0,
+        "countertop_clutter": 6,
+        "unsafe_object_placement": 0,
+        "normal": 2,
+        "uncertain": 0
+      },
+      "unsafe_object_placement": {
+        "floor_obstruction": 0,
+        "countertop_clutter": 1,
+        "unsafe_object_placement": 0,
+        "normal": 1,
+        "uncertain": 0
+      },
+      "normal": {
+        "floor_obstruction": 0,
+        "countertop_clutter": 3,
+        "unsafe_object_placement": 0,
+        "normal": 11,
+        "uncertain": 0
+      },
+      "uncertain": {
+        "floor_obstruction": 0,
+        "countertop_clutter": 1,
+        "unsafe_object_placement": 0,
+        "normal": 1,
+        "uncertain": 0
+      }
+    }
+  }
+}

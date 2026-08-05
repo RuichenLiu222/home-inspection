@@ -32,8 +32,11 @@ flowchart TD
     H --> G
 ```
 
-`verified` 方法不是第二个模型，而是使用同一个 SmolVLM 对首次判断进行一次严格的
-视觉证据复核。只有复核回答 `yes` 时才保留问题。
+`verified` 方法不是第二个模型，而是复用 `checklist` 的同一次初判，再使用同一个
+SmolVLM 进行严格的视觉证据复核。只有复核回答 `yes` 时才保留问题，因此可以将
+`checklist` 和 `verified` 逐图公平比较。Demo 中未勾选二次确认时运行 `checklist`，
+勾选后运行 `verified`；若模型没有生成处理建议，界面会补充透明的类别模板建议，
+但不会改变实验预测标签。
 
 ## 项目结构
 
@@ -43,13 +46,15 @@ home-inspection/
 ├── data/
 │   ├── raw/                 # NYU .mat 文件，不提交 Git
 │   ├── candidates/          # 导出的厨房候选图片
-│   ├── debug/               # 提示词调试图片
-│   └── test/                # 最终测试图片
-├── results/                 # 预测、指标和代表性图片
+│   ├── selected/debug/      # 最终提示词调试图片
+│   └── selected/test/       # 最终测试图片
+├── results/                 # 最终预测、指标、冻结提示词和案例分析
 ├── tests/                   # 不依赖模型权重的自动化测试
 ├── download_data.py         # 下载约 2.8 GB 标注版数据
 ├── prepare_data.py          # 筛选 sceneTypes == kitchen 并导出 RGB
 ├── curate_data.py           # 人工筛选、划分和单标签标注界面
+├── select_subset.py         # 从完整标注池分层抽取 15/30 张图片
+├── review_annotations.py    # 逐张复核最终子集标签
 ├── analyze_data.py          # 数量统计和 6—8 张代表图拼图
 ├── run_model.py             # 四种提示实验
 ├── evaluate.py              # Accuracy、误报数、JSON 合法率
@@ -114,6 +119,27 @@ python curate_data.py
 
 建议最终使用 15 张调试图和 30 张测试图，并尽量保证五类分布不过度失衡。
 
+如果人工审核得到的有效图片超过 60 张，可以先保留完整标注，再使用固定随机种子
+进行分层抽样：
+
+```powershell
+Copy-Item data\annotations.jsonl data\annotations_all_128.jsonl
+python select_subset.py
+```
+
+脚本不会删除原始图片，会从完整标注池中选择 15 张调试图片和 30 张测试图片，
+复制到 `data/selected/`，并将最终 45 张样本写入 `data/annotations.jsonl`。
+
+正式运行模型前，建议逐张复核最终 45 张图片：
+
+```powershell
+Copy-Item data\annotations.jsonl data\annotations_before_review.jsonl
+python review_annotations.py
+```
+
+复核工具运行在 `http://127.0.0.1:7862`，可以修改人工标准标签，但不会删除图片或
+改变 debug/test 划分。
+
 ## 4. 数据观察
 
 ```powershell
@@ -136,7 +162,7 @@ python run_model.py --split debug --methods all --output results/debug_predictio
 提示词确定后，不再根据测试结果修改提示词，然后运行测试集：
 
 ```powershell
-python run_model.py --split test --methods all --output results/test_predictions.jsonl
+python run_model.py --split test --methods all --output results/test_final_predictions.jsonl
 ```
 
 第一次运行会从 Hugging Face 下载模型权重。可选方法如下：
@@ -146,7 +172,7 @@ python run_model.py --split test --methods all --output results/test_predictions
 | `direct` | 简单开放式提问，使用规则将回答映射为标签 |
 | `checklist` | 明确三类检查清单，只输出一个标签 |
 | `structured` | 检查清单并强制输出 JSON |
-| `verified` | 复用 `structured` 初判，问题样本再进行证据确认 |
+| `verified` | 复用同一次 `checklist` 初判，问题样本再进行证据确认 |
 
 也可以只运行指定方法：
 
@@ -159,10 +185,10 @@ python run_model.py --split test --methods structured,verified
 ## 6. 计算指定指标
 
 ```powershell
-python evaluate.py --predictions results/test_predictions.jsonl
+python evaluate.py --predictions results/test_final_predictions.jsonl --output results/test_final_metrics.json
 ```
 
-生成 `results/metrics.json` 和 `results/metrics.csv`，包含：
+生成 `results/test_final_metrics.json` 和 `results/test_final_metrics.csv`，包含：
 
 - **Accuracy**：最终预测标签与人工标签严格一致的比例；
 - **误报数量**：真实为 `normal`，却预测为三类问题之一的次数；
@@ -171,10 +197,48 @@ python evaluate.py --predictions results/test_predictions.jsonl
 程序允许 Demo 对带 Markdown 代码块的 JSON 进行容错恢复，但这种输出在正式
 JSON 合法率中仍记为不合法，避免指标虚高。
 
+### 最终实验结果
+
+共人工审核 225 张 NYU Depth V2 厨房候选图片，剔除 97 张模糊、重复或无效图片，
+得到 128 张有效标注图片。使用固定随机种子进行分层抽样后，最终使用 45 张：
+调试集 15 张、测试集 30 张。最终标签分布为：
+
+| 标签 | 数量 |
+|---|---:|
+| `floor_obstruction` | 6 |
+| `countertop_clutter` | 11 |
+| `unsafe_object_placement` | 3 |
+| `normal` | 21 |
+| `uncertain` | 4 |
+
+固定提示词后在 30 张测试图片上的结果如下：
+
+| 方法 | Accuracy | 正常图误报数 | JSON 合法率 |
+|---|---:|---:|---:|
+| `direct` | 46.67% | 0 | — |
+| `checklist` | 23.33% | 14 | — |
+| `verified` | 43.33% | 8 | — |
+| `structured` | **56.67%** | **3** | **86.67%** |
+
+二次确认将检查清单方法的正确数从 7 提高到 13，准确率提高 20 个百分点；正常图
+误报从 14 次降低到 8 次，下降 42.9%。这说明视觉证据复核可以明显抑制误报，但仍
+不能完全消除第一轮判断造成的锚定。`structured` 获得最高准确率和最低问题误报数，
+26/30 条原始输出可以直接由 `json.loads()` 解析。
+
+`direct` 将 30 张测试图中的 27 张判断为 `normal`，其 46.67% 准确率主要来自测试集
+中 14 张正常图片，说明开放式提问对异常类别的识别能力较弱。所有方法对
+`unsafe_object_placement` 的识别仍然困难，模型容易将危险空间关系简化为台面杂乱。
+
+四个代表案例为：`kitchen_0898.jpg` 正确识别地面障碍；`kitchen_0907.jpg` 通过二次
+确认将台面杂乱误报修正为正常；`kitchen_0829.jpg` 在二次确认后仍误报地面障碍；
+`kitchen_0128.jpg` 将靠近炉具的毛巾错误识别为台面杂乱。详细记录见
+[`results/case_analysis.md`](results/case_analysis.md)，逐图预测与最终指标也保存在
+`results/`。NYU 原图及含原图的 Demo 截图不随公开仓库分发。
+
 ## 7. 启动 Demo
 
 ```powershell
-python app.py
+python app.py --device cuda
 ```
 
 打开 `http://127.0.0.1:7860`，上传厨房图片并点击“开始巡检”。界面显示：
@@ -183,7 +247,10 @@ python app.py
 - 问题类别；
 - 可见判断依据；
 - 简单处理建议；
-- 原始结构化结果和二次确认状态。
+- 原始模型输出、解析信息和二次确认状态。
+
+未勾选“启用视觉证据二次确认”时使用 `checklist`，勾选后使用 `verified`。因此可以
+使用同一张图片直接观察二次确认前后的判断变化。
 
 ## 8. 运行测试
 

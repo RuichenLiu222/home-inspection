@@ -12,15 +12,30 @@ data/raw/*
 data/candidates/*
 data/debug/*
 data/test/*
+data/selected/*
 !data/raw/.gitkeep
 !data/candidates/.gitkeep
 !data/debug/.gitkeep
 !data/test/.gitkeep
-data/annotations.jsonl
-data/curation.jsonl
+!data/selected/debug/
+!data/selected/test/
+data/selected/debug/*
+data/selected/test/*
+!data/selected/debug/.gitkeep
+!data/selected/test/.gitkeep
+data/annotations*.jsonl
+data/curation*.jsonl
 data/candidates.jsonl
 results/*
 !results/.gitkeep
+!results/test_final_metrics.json
+!results/test_final_metrics.csv
+!results/test_final_predictions.jsonl
+!results/prompts_final.py
+!results/case_analysis.md
+!results/data_analysis/
+results/data_analysis/*
+!results/data_analysis/dataset_summary.json
 
 # Downloaded model caches if a local cache is placed in this repository
 models/

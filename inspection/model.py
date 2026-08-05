@@ -44,7 +44,7 @@ class SmolVLMRunner:
         if self.model is not None:
             return
         import torch
-        from transformers import AutoModelForVision2Seq, AutoProcessor
+        from transformers import AutoModelForImageTextToText, AutoProcessor
 
         if self.device == "cuda":
             dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
@@ -52,9 +52,9 @@ class SmolVLMRunner:
             dtype = torch.float32
 
         self.processor = AutoProcessor.from_pretrained(self.model_id)
-        self.model = AutoModelForVision2Seq.from_pretrained(
+        self.model = AutoModelForImageTextToText.from_pretrained(
             self.model_id,
-            torch_dtype=dtype,
+            dtype=dtype,
             low_cpu_mem_usage=True,
         ).to(self.device)
         self.model.eval()
@@ -64,6 +64,7 @@ class SmolVLMRunner:
         image: Image.Image | str | Path,
         prompt: str,
         max_new_tokens: int | None = None,
+        assistant_prefix: str = "",
     ) -> tuple[str, float]:
         import numpy as np
         import torch
@@ -90,15 +91,27 @@ class SmolVLMRunner:
                 ],
             }
         ]
+        if assistant_prefix:
+            messages.append(
+                {
+                    "role": "assistant",
+                    "content": [{"type": "text", "text": assistant_prefix}],
+                }
+            )
         chat_prompt = self.processor.apply_chat_template(
             messages,
-            add_generation_prompt=True,
+            add_generation_prompt=not assistant_prefix,
+            continue_final_message=bool(assistant_prefix),
+            tokenize=False,
         )
         inputs = self.processor(
             text=chat_prompt,
             images=[image],
             return_tensors="pt",
-        ).to(self.device)
+        )
+        if "pixel_values" not in inputs:
+            raise RuntimeError("SmolVLM processor did not create visual inputs for the image")
+        inputs = inputs.to(self.device)
 
         started = time.perf_counter()
         with torch.inference_mode():
@@ -118,4 +131,6 @@ class SmolVLMRunner:
         )[0].strip()
         if text.lower().startswith("assistant:"):
             text = text.split(":", 1)[1].strip()
-        return text, elapsed
+        if assistant_prefix and text.startswith("{"):
+            return text, elapsed
+        return f"{assistant_prefix}{text}", elapsed

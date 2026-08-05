@@ -11,7 +11,8 @@ from inspection.pipeline import METHODS, InspectionPipeline
 
 
 def parse_methods(value: str) -> list[str]:
-    methods = list(METHODS) if value == "all" else [item.strip() for item in value.split(",")]
+    required = ["direct", "checklist", "structured", "verified"]
+    methods = required if value == "all" else [item.strip() for item in value.split(",")]
     unknown = [method for method in methods if method not in METHODS]
     if unknown:
         raise ValueError(f"Unknown methods: {unknown}. Valid methods: {METHODS}")
@@ -42,15 +43,14 @@ def run(args: argparse.Namespace) -> list[dict]:
             traces = []
             if "direct" in methods:
                 traces.append(pipeline.inspect(image_path, "direct"))
-            if "checklist" in methods:
-                traces.append(pipeline.inspect(image_path, "checklist"))
-            if "structured" in methods or "verified" in methods:
-                structured = pipeline.inspect_structured(image_path)
-                if "structured" in methods:
-                    traces.append(structured)
+            if "checklist" in methods or "verified" in methods:
+                checklist = pipeline.inspect_checklist(image_path)
+                if "checklist" in methods:
+                    traces.append(checklist)
                 if "verified" in methods:
-                    traces.append(pipeline.verify(image_path, structured))
-
+                    traces.append(pipeline.verify(image_path, checklist))
+            if "structured" in methods:
+                traces.append(pipeline.inspect_structured(image_path))
             for trace in traces:
                 records.append(
                     {

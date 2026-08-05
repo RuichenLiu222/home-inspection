@@ -1,0 +1,14 @@
+{
+  "total": 45,
+  "split_counts": {
+    "debug": 15,
+    "test": 30
+  },
+  "label_counts": {
+    "floor_obstruction": 6,
+    "countertop_clutter": 11,
+    "unsafe_object_placement": 3,
+    "normal": 21,
+    "uncertain": 4
+  }
+}
