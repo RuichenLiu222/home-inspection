@@ -222,3 +222,35 @@ def parse_confirmation(raw: str) -> str:
         return exact
     decisions = set(re.findall(r"\b(yes|no|uncertain)\b", raw.strip().lower()))
     return next(iter(decisions)) if len(decisions) == 1 else "uncertain"
+
+
+def parse_quality(raw: str) -> str:
+    """Parse the V2 image-quality gate without guessing from free text."""
+    exact = raw.strip().lower().strip(" .!`'\"")
+    if exact in {"clear", "uncertain"}:
+        return exact
+    decisions = set(re.findall(r"\b(clear|uncertain)\b", raw.lower()))
+    return next(iter(decisions)) if len(decisions) == 1 else "uncertain"
+
+
+def parse_region_response(raw: str) -> tuple[str, str]:
+    """Parse ``YES | object | location``, ``NO`` or ``UNCERTAIN``.
+
+    The first decision token is deliberately strict.  A malformed response is
+    uncertain rather than being coerced into an issue label.
+    """
+    text = raw.strip()
+    match = re.match(r"^(yes|no|uncertain)\b", text, flags=re.IGNORECASE)
+    if match is None:
+        return "uncertain", ""
+
+    decision = match.group(1).lower()
+    if decision != "yes":
+        return decision, ""
+
+    parts = [part.strip(" .\t") for part in text.split("|")]
+    if len(parts) >= 3 and parts[1] and parts[2]:
+        return "yes", f"{parts[1]} — {parts[2]}"
+
+    remainder = text[match.end() :].strip(" :|-.")
+    return ("yes", remainder) if remainder else ("uncertain", "")

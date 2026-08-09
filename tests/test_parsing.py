@@ -4,6 +4,8 @@ from inspection.parsing import (
     extract_loose_mapping,
     parse_confirmation,
     parse_label,
+    parse_quality,
+    parse_region_response,
     parse_structured,
     strict_json_object,
 )
@@ -79,3 +81,19 @@ def test_loose_structured_fields_are_recovered_without_claiming_valid_json():
 
 def test_conflicting_confirmation_words_are_uncertain():
     assert parse_confirmation("yes or no") == "uncertain"
+
+
+def test_region_response_parser_requires_a_leading_decision():
+    assert parse_region_response("YES | plate | center of walking path") == (
+        "yes",
+        "plate — center of walking path",
+    )
+    assert parse_region_response("NO") == ("no", "")
+    assert parse_region_response("The answer is YES") == ("uncertain", "")
+    assert parse_region_response("YES") == ("uncertain", "")
+
+
+def test_quality_parser_is_conservative():
+    assert parse_quality("CLEAR") == "clear"
+    assert parse_quality("UNCERTAIN") == "uncertain"
+    assert parse_quality("clear or uncertain") == "uncertain"

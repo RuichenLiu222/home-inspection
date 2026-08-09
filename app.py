@@ -26,8 +26,8 @@ SUGGESTION_ZH = {
 
 
 def _demo_method(use_confirmation: bool) -> str:
-    """Keep the checkbox comparison on one checklist-based pipeline."""
-    return "verified" if use_confirmation else "checklist"
+    """Use the region-decomposed V2 pipeline in the interactive demo."""
+    return "region_v2_verified" if use_confirmation else "region_v2"
 
 
 def _with_demo_suggestion(result):

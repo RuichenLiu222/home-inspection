@@ -51,6 +51,12 @@ def run(args: argparse.Namespace) -> list[dict]:
                     traces.append(pipeline.verify(image_path, checklist))
             if "structured" in methods:
                 traces.append(pipeline.inspect_structured(image_path))
+            if "region_v2" in methods or "region_v2_verified" in methods:
+                region_trace = pipeline.inspect_regions(image_path)
+                if "region_v2" in methods:
+                    traces.append(region_trace)
+                if "region_v2_verified" in methods:
+                    traces.append(pipeline.verify_regions(image_path, region_trace))
             for trace in traces:
                 records.append(
                     {
