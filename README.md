@@ -26,7 +26,7 @@ Demo 使用 Gradio 编写，支持上传单张厨房图片，并显示问题类�
 ## 2. 整体流程
 
 <p align="center">
-  <img src="docs/model_architecture.svg" width="100%" alt="项目流程图" />
+  <img src="docs/model_architecture.png" width="100%" alt="项目流程图" />
 </p>
 
 一次完整的巡检包含以下步骤：
@@ -196,7 +196,7 @@ home-inspection/
 ├── results/                 # 指标、预测记录和案例分析
 ├── tests/                   # 单元测试
 ├── docs/
-│   └── model_architecture.svg
+│   └── model_architecture.png
 ├── run_model.py
 ├── evaluate.py
 ├── app.py
