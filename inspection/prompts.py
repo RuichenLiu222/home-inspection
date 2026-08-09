@@ -4,21 +4,19 @@ DIRECT_PROMPT = (
 )
 
 
-CHECKLIST_PROMPT = """Inspect one kitchen image. Decide from visible evidence only.
+CHECKLIST_PROMPT = """Inspect one kitchen image using visible evidence only.
 
-Use this decision procedure silently:
-1. If the relevant areas cannot be judged because of severe blur or occlusion: uncertain.
-2. If no strong evidence below is present: normal.
-3. Otherwise choose the single issue with the clearest visible evidence:
-   - countertop_clutter: multiple loose items substantially occupy the counter or sink.
-     One appliance or a few normally used items are not enough.
-   - unsafe_object_placement: a named object has a directly visible dangerous relation,
-     such as beside a flame, at a falling edge, or an electrical item beside water.
-   - floor_obstruction: a named object is visibly on the floor or walking path.
-     Never use this for an object located only on a counter, table, sink, or appliance.
+Silently check three places before answering:
+1. Are many loose items covering a substantial part of the counter or sink?
+2. Is an object in a directly visible dangerous relation to heat, water, or an edge?
+3. Is a movable object actually located on the floor or walking path?
 
-Do not list several labels and do not copy these rules. Reply in exactly two short lines:
-Evidence: name one visible object and its location, or say no listed issue is visible.
+Objects on a counter, sink, table, stove, or appliance are never floor obstructions.
+A few normally used items are not countertop clutter. An object without a visible
+dangerous relation is not unsafe placement. If none applies, choose normal. Choose
+uncertain only when severe blur or occlusion prevents judgment.
+
+Reply with one label only and no explanation.
 Decision: exactly one label from normal, countertop_clutter, unsafe_object_placement,
 floor_obstruction, uncertain."""
 
