@@ -61,3 +61,47 @@ def test_structured_generation_uses_json_prefill():
     trace = pipeline.inspect(Image.new("RGB", (8, 8)), "structured")
     assert trace.parsed.label == "normal"
     assert runner.assistant_prefixes == ['{"result":"']
+
+
+def test_region_v2_aggregates_independent_checks_by_risk_priority():
+    runner = FakeRunner(
+        [
+            "CLEAR",
+            "YES | plate | center of walking path",
+            "YES | dishes | sink area",
+            "NO",
+        ]
+    )
+    pipeline = InspectionPipeline(runner=runner)
+    trace = pipeline.inspect(Image.new("RGB", (8, 8)), "region_v2")
+    assert trace.parsed.label == "floor_obstruction"
+    assert "plate" in trace.parsed.evidence
+    assert trace.component_decisions["countertop_clutter"] == "yes"
+    assert runner.calls == 4
+
+
+def test_region_v2_quality_gate_stops_early():
+    runner = FakeRunner(["UNCERTAIN"])
+    pipeline = InspectionPipeline(runner=runner)
+    trace = pipeline.inspect(Image.new("RGB", (8, 8)), "region_v2")
+    assert trace.parsed.label == "uncertain"
+    assert runner.calls == 1
+
+
+def test_region_verifier_can_reject_first_candidate_and_keep_second():
+    runner = FakeRunner(
+        [
+            "CLEAR",
+            "YES | plate | walking path",
+            "YES | dishes | sink area",
+            "YES | towel | on a burner",
+            "no",
+            "yes",
+        ]
+    )
+    pipeline = InspectionPipeline(runner=runner)
+    trace = pipeline.inspect(Image.new("RGB", (8, 8)), "region_v2_verified")
+    assert trace.parsed.label == "floor_obstruction"
+    assert trace.confirmation_decision == "yes"
+    assert "unsafe_object_placement: no" in trace.confirmation_output
+    assert runner.calls == 6
