@@ -26,8 +26,8 @@ SUGGESTION_ZH = {
 
 
 def _demo_method(use_confirmation: bool) -> str:
-    """Use the region-decomposed V2 pipeline in the interactive demo."""
-    return "region_v2_verified" if use_confirmation else "region_v2"
+    """Use structured output by default and the required verifier on demand."""
+    return "verified" if use_confirmation else "structured"
 
 
 def _with_demo_suggestion(result):
@@ -349,7 +349,7 @@ def build_app(model_id: str, device: str) -> gr.Blocks:
                     )
                 with gr.Column(scale=5, elem_id="inspection-panel"):
                     confirmation = gr.Checkbox(
-                        value=True,
+                        value=False,
                         label="启用视觉证据二次确认",
                         elem_id="confirm-control",
                     )
