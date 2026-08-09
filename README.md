@@ -5,7 +5,7 @@
 [![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11-3776AB)](https://www.python.org/)
 [![Model](https://img.shields.io/badge/Model-SmolVLM--500M-FFD21E)](https://huggingface.co/HuggingFaceTB/SmolVLM-500M-Instruct)
 [![Dataset](https://img.shields.io/badge/Dataset-NYU%20Depth%20V2-4C8BF5)](https://cs.nyu.edu/~fergus/datasets/nyu_depth_v2.html)
-[![Tests](https://img.shields.io/badge/Tests-16%20passed-22C55E)](#代码质量)
+[![Tests](https://img.shields.io/badge/Tests-21%20passed-22C55E)](#代码质量)
 
 ## 1. 项目简介
 
@@ -340,7 +340,7 @@ python -m venv .venv
 当前项目已验证：
 
 ```text
-16 passed
+21 passed
 ruff: All checks passed
 ```
 
