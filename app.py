@@ -26,12 +26,10 @@ SUGGESTION_ZH = {
 
 
 def _demo_method(use_confirmation: bool) -> str:
-    """Use structured output by default and the required verifier on demand."""
     return "verified" if use_confirmation else "structured"
 
 
 def _with_demo_suggestion(result):
-    """Fill a missing UI suggestion without changing experiment predictions."""
     if result.result != "attention" or result.suggestion:
         return result
     return replace(result, suggestion=SUGGESTION_ZH[result.issue_type])

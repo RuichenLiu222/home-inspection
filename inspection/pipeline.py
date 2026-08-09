@@ -227,10 +227,8 @@ class InspectionPipeline:
         )
 
     def inspect_checklist(self, image: Image.Image | str | Path) -> InspectionTrace:
-        # Do not prefill the checklist response. SmolVLM-500M is sensitive to
-        # this prefix and can continue with a memorized label instead of first
-        # inspecting the image. JSON prefilling remains limited to the
-        # structured-output method where it was validated on the debug set.
+        # Prefixing this response caused repeated labels in debug runs, so the
+        # checklist starts from an empty answer.
         raw, latency = self.runner.generate(image, CHECKLIST_PROMPT, max_new_tokens=64)
         parsed = result_from_label(parse_label(raw), raw)
         return InspectionTrace(

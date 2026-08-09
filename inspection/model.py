@@ -11,7 +11,7 @@ DEFAULT_MODEL_ID = "HuggingFaceTB/SmolVLM-500M-Instruct"
 
 
 class SmolVLMRunner:
-    """Lazy, deterministic wrapper around Hugging Face SmolVLM inference."""
+    """Load SmolVLM on first use and keep inference deterministic."""
 
     def __init__(
         self,

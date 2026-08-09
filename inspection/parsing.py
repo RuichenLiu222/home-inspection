@@ -41,7 +41,6 @@ NORMAL_PATTERNS = (
 
 
 def strict_json_object(raw: str) -> tuple[dict[str, Any] | None, bool]:
-    """Parse an unmodified model response and report raw JSON validity."""
     try:
         value = json.loads(raw.strip())
     except (json.JSONDecodeError, TypeError):
@@ -50,7 +49,7 @@ def strict_json_object(raw: str) -> tuple[dict[str, Any] | None, bool]:
 
 
 def extract_json_object(raw: str) -> dict[str, Any] | None:
-    """Best-effort parser used by the demo, not by the JSON-validity metric."""
+    # JSON validity is recorded before attempting recovery.
     strict, valid = strict_json_object(raw)
     if valid:
         return strict
@@ -69,7 +68,6 @@ def extract_json_object(raw: str) -> dict[str, Any] | None:
 
 
 def extract_loose_mapping(raw: str) -> dict[str, str] | None:
-    """Recover simple key-value output without counting it as valid JSON."""
     fields: dict[str, str] = {}
     pattern = re.compile(
         r"[\"']?(result|issue_type|evidence|suggestion)[\"']?\s*[:=]\s*"
@@ -195,7 +193,6 @@ def result_from_label(label: str, raw: str = "") -> InspectionResult:
 
 
 def parse_structured(raw: str) -> tuple[InspectionResult, bool, str]:
-    """Return normalized result, raw JSON validity, and parse strategy."""
     strict, raw_valid = strict_json_object(raw)
     value = strict if raw_valid else extract_json_object(raw)
     if value is not None:
@@ -225,7 +222,6 @@ def parse_confirmation(raw: str) -> str:
 
 
 def parse_quality(raw: str) -> str:
-    """Parse the V2 image-quality gate without guessing from free text."""
     exact = raw.strip().lower().strip(" .!`'\"")
     if exact in {"clear", "uncertain"}:
         return exact
@@ -234,12 +230,8 @@ def parse_quality(raw: str) -> str:
 
 
 def parse_region_response(raw: str) -> tuple[str, str]:
-    """Parse ``YES | object | location``, ``NO`` or ``UNCERTAIN``.
-
-    The first decision token is deliberately strict.  A malformed response is
-    uncertain rather than being coerced into an issue label.
-    """
     text = raw.strip()
+    # Without a leading decision token, the response is not forced into a label.
     match = re.match(r"^(yes|no|uncertain)\b", text, flags=re.IGNORECASE)
     if match is None:
         return "uncertain", ""
