@@ -372,7 +372,7 @@ def build_app(model_id: str, device: str) -> gr.Blocks:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Launch the kitchen-inspection Gradio demo")
+    parser = argparse.ArgumentParser(description="Run the kitchen inspection demo")
     parser.add_argument("--model", default=DEFAULT_MODEL_ID)
     parser.add_argument("--device", default="auto")
     parser.add_argument("--host", default="127.0.0.1")
