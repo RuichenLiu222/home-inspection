@@ -66,8 +66,7 @@ Answer uncertain if the relevant region cannot be judged.
 Reply with exactly one word: yes, no, or uncertain."""
 
 
-# The region prompts below are optional experiments; the tested prompts above
-# stay fixed for the reported comparison.
+# Optional region-based prompts used during exploratory runs.
 QUALITY_PROMPT = """Look at this single image.
 Is it a kitchen image clear enough to identify visible objects and where they are?
 Reply with exactly one token: CLEAR or UNCERTAIN.
